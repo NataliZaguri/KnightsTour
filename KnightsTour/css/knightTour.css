@@ -1,0 +1,54 @@
+﻿
+#knightDv {
+    position: relative;
+}
+
+.knightImg {
+    position: absolute;
+    /*top: 0;*/
+    right: 0;
+    width: 45px;
+    height: 45px;
+}
+
+/*.visitedImg {
+    width: 25px;
+    height: 25px;
+}*/
+#visitedDv {
+    position: relative;
+}
+.visitedImg {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 25px;
+    height: 25px;
+}
+
+
+
+table.board {
+    margin: 80px auto;
+    background-color: brown;
+    border-collapse: collapse;
+}
+
+td.board {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #333;
+}
+
+tr.board:nth-child(odd) td.board:nth-child(even),
+tr.board:nth-child(even) td.board:nth-child(odd) {
+    background: white;
+}
+
+svg {
+    position: relative;
+    z-index: 1;
+}
+
+
+

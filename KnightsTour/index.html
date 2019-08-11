@@ -1,0 +1,413 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/knightTour.css">
+    <script src="js/knightTour.js"></script>
+</head>
+<body>
+    <h1>Knights Tour</h1>
+    <hr />
+    <h3>Please choose starting square coordinates:</h3>
+    
+    X: <input id="x" name="x" type="number" min="0" max="7" value="2" style="width:100px">
+    <br><br>
+    Y: <input id="y" name="y" type="number" min="0" max="7" value="2" style="width:100px">
+    <br><br>
+    <button onclick="run()">Run</button>
+
+    <!--<img src="image/knight.png" class="knightImg" />-->
+    <!--<table class="board">
+        <tr class="board">
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+        </tr>
+        <tr class="board">
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+        </tr>
+        <tr class="board">
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+        </tr>
+        <tr class="board">
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+        </tr>
+        <tr class="board">
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+        </tr>
+        <tr class="board">
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+        </tr>
+        <tr class="board">
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+        </tr>
+        <tr class="board">
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+            <td class="board"></td>
+        </tr>
+    </table>-->
+
+    <div id="#moves"></div>
+
+    <!--<svg height="210" width="500">
+        <line x1="674.5" y1="49" x2="782.5" y2="-5" style="stroke: rgb(255, 0, 0); stroke-width: 2; z-index:9999">
+        </line>
+    </svg>
+
+    <svg height="210" width="500">
+        <line x1="0" y1="0" x2="1000" y2="1000" style="stroke:rgb(255,0,0);stroke-width:2" />
+        Sorry, your browser does not support inline SVG.
+    </svg>-->
+
+    <script>
+
+        var boardSize = 8;
+        var currentInterval = null;
+        buildChessboard(false);
+
+        function buildChessboard(isInit) {
+
+            //var svg = document.createElement('svg');
+            //svg.id = "mySvg";
+            //svg.setAttribute("height", 420);
+            //svg.setAttribute("width", 430);
+
+
+
+            //<foreignObject x="10" y="10" width="100" height="150">
+            //    <body xmlns="http://www.w3.org/1999/xhtml">
+            //        <table><!-- ... --></table>
+            //    </body>
+            //</foreignObject>
+
+
+            //var myCanvas = document.createElement('canvas');
+            //myCanvas.id = "myCanvas";
+            //myCanvas.setAttribute("height", 420);
+            //myCanvas.setAttribute("width", 430);
+
+            var table = null;
+            if (isInit) {
+                document.getElementById('boardTbl').remove();
+                if (currentInterval !== null) {
+                    clearTimeout(currentInterval);
+                }
+            }
+
+            var table = document.createElement('table');
+            table.id = "boardTbl";
+            table.classList.add("board");
+
+            var td = null;
+            var tr = null;
+            var currentCordinates = null
+
+            for (let x = 0; x < boardSize; x++) {
+
+                tr = document.createElement('tr');
+                tr.classList.add("board");
+
+                for (let y = 0; y < boardSize; y++) {
+
+                    td = document.createElement('td');
+                    //Each created td is set with x & y coordinates
+                    td.id = x + ":" + y;
+                    td.classList.add("board");
+
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+
+
+            //myCanvas.appendChild(table);
+
+            document.body.appendChild(table);
+
+        }
+
+        function run() {
+
+            var x = parseInt(document.getElementById("x").value);
+            var y = parseInt(document.getElementById("y").value);
+
+            if (isNaN(x) || isNaN(y)) {
+                alert("Invalid input params...");
+                return;
+            }
+            else if (x < 0 || x > boardSize-1) {
+                alert("'X' value must be between zero and " + boardSize-1);
+                return;
+            }
+            else if (y < 0 || y > boardSize-1) {
+                alert("'Y' value must be between zero and " + boardSize-1);
+                return;
+            }
+            else {
+
+                buildChessboard(true);
+
+                const moves = knightsTour(x, y, boardSize);
+                document.getElementById("#moves").innerHTML = moves;
+
+                //console.log(moves);
+
+                var knightImg = createKnightImg();
+                var formatedPathArr = [];
+                var formattedItem = {};
+                for (let i = 0; i < moves.length; i++) {
+                    var currMove = moves[i];
+                    if (currMove.Path.length === 0) {
+                        //FirstMove
+                        formattedItem = {
+                            X: currMove.NextMove[0],
+                            Y: currMove.NextMove[1],
+                            IsNextMove: true
+                        };
+                        formatedPathArr.push(formattedItem);
+                    }
+                    else {
+
+                        for (let i = 0; i < currMove.Path.length; i++) {
+                            formattedItem = {
+                                X: currMove.Path[i][0],
+                                Y: currMove.Path[i][1],
+                                IsNextMove: currMove.Path[i][0] === currMove.NextMove[0] &&
+                                currMove.Path[i][1] === currMove.NextMove[1]
+                            };
+                            formatedPathArr.push(formattedItem);
+                        }
+                    }
+                }
+                console.log(formatedPathArr);
+                drawKnightTour(0, formatedPathArr, knightImg, undefined, 800);
+            }
+        }
+
+        function drawKnightTour(counter, pathArr, knightImg, previousSquareTD, delay) {
+
+            console.log(pathArr);
+
+            if (counter < pathArr.length) {
+                currentInterval = setTimeout(function () {
+
+                    var currItem = pathArr[counter];
+
+                    if (counter === 0) {
+
+                        //FirstMove
+                        var firstMoveElemId = currItem.X + ":" + currItem.Y;//Fox ex: 2:2
+                        var firstMoveSquareTD = document.getElementById(firstMoveElemId);
+
+                        //console.log("firstMoveElemId: " + firstMoveElemId);
+                        //console.log("firstMoveSquareTD: " + firstMoveSquareTD);
+
+                        //console.log("currItem");
+                        //console.log(currItem);
+
+                        //Red Track
+                        appendVisitedImgToSquare(firstMoveSquareTD);
+
+                        //First move
+                        appendKnightImgToSquare(firstMoveSquareTD, knightImg);
+                    }
+                    else {
+
+                        //console.log("HERE!!!");
+
+                        //console.log("currItem");
+                        //console.log(currItem);
+
+                        var squareElemId = currItem.X + ":" + currItem.Y;//Fox ex: 2:2
+                        var squareToVisitTD = document.getElementById(squareElemId);
+
+                        if (currItem.IsNextMove) {
+                            if (currItem.X === 7 && currItem.Y === 0) {
+                                console.log("squareToVisitTD");
+                                console.log(squareToVisitTD);
+
+                                console.log("currItem");
+                                console.log(currItem);
+
+                                appendVisitedImgToSquare(squareToVisitTD);
+                            }
+
+                            //Red Track
+                            appendVisitedImgToSquare(squareToVisitTD);
+
+                            //KnightImg
+                            appendKnightImgToSquare(squareToVisitTD, knightImg);
+                        }
+                        else {
+
+                            //console.log("Red Track: " + currItem);
+
+                            //Red Track
+                            appendVisitedImgToSquare(squareToVisitTD);
+                        }
+                    }
+
+                    //appendVisitedImgToSquare(previousSquareTD);
+
+                    counter++;
+                    drawKnightTour(counter, pathArr, knightImg, squareToVisitTD, delay);
+                }, delay);
+            }
+        }
+
+        function appendKnightImgToSquare(square, knightImg) {
+            square.appendChild(knightImg);
+        }
+        function appendVisitedImgToSquare(prevSquare) {
+            if (prevSquare !== undefined && prevSquare !== null) {
+                var hasChildNodes = prevSquare.hasChildNodes();
+                //console.log(hasChildNodes);
+                if (!hasChildNodes) {
+                    var visitedImg = createVisitedImg();
+                    prevSquare.appendChild(visitedImg);
+                }
+            }
+        }
+
+        function animateAppendKnightImgToSquare(squareTD, knightImg, previousSquare) {
+
+            if (previousSquare === undefined) {
+                squareTD.appendChild(knightImg);
+                return;
+            }
+
+            var prevSquarePosRect = getPositionXY(previousSquare);
+            var currSquarePosRect = getPositionXY(squareTD);
+
+
+            //            <svg height="210" width="500">
+            //                <line x1="0" y1="0" x2="1000" y2="1000" style="stroke:rgb(255,0,0);stroke-width:2" />
+            //                Sorry, your browser does not support inline SVG.
+            //</svg>
+
+            //var svg = document.getElementById('mySvg');
+
+            //svg.setAttribute("height", 210);
+            //svg.setAttribute("width", 500);
+
+            //var line = document.createElement('line');
+
+            //line.setAttribute("x1", prevSquarePosRect.x);
+            //line.setAttribute("y1", prevSquarePosRect.y);
+
+            //line.setAttribute("x2", currSquarePosRect.x);
+            //line.setAttribute("y2", currSquarePosRect.y);
+
+            //line.style = "stroke:rgb(255,0,0);stroke-width:2;";
+
+            //svg.appendChild(line);
+            //document.body.appendChild(svg);
+
+            var myCanvas = document.getElementById('myCanvas');
+
+            var tableBoard = document.getElementsByClassName("board");
+
+            console.log("tableBoard.style.height");
+            console.log(tableBoard.offsetHeight);
+
+
+            var ctx = myCanvas.getContext("2d");
+            ctx.beginPath();
+
+            //ctx.moveTo(10, 10);
+            //ctx.lineTo(300, 150);
+
+            ctx.moveTo(prevSquarePosRect.x, prevSquarePosRect.y);
+            ctx.lineTo(currSquarePosRect.x, currSquarePosRect.y);
+
+            ctx.stroke();
+            document.body.appendChild(myCanvas);
+
+            squareTD.appendChild(knightImg);
+
+        }
+
+        function getPositionXY(element) {
+            var rect = element.getBoundingClientRect();
+            return rect;
+        }
+
+        function createKnightImg() {
+
+            var dv = document.createElement('div');
+            dv.id = "knightDv";
+            var knightImg = document.createElement('img');
+            knightImg.id = "knightImg"
+            knightImg.src = "image/knight.png";
+            knightImg.classList.add("knightImg");
+            dv.appendChild(knightImg);
+            return dv;
+        }
+        function createVisitedImg() {
+
+            var dv = document.createElement('div');
+            dv.id = "visitedDv";
+            var visitedImg = document.createElement('img');
+            visitedImg.id = "visitedImg"
+            visitedImg.src = "image/visited.jpg";
+            visitedImg.classList.add("visitedImg");
+            dv.appendChild(visitedImg);
+            return dv;
+        }
+
+    </script>
+
+</body>
+</html>
