@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <script src="js/tour.js"></script>
+    <script src="js/helper.js"></script>
+    <script src="js/draw.js"></script>
+</head>
+<body>
+    <h1>Knights Tour</h1>
+    <hr />
+    <h3>Please choose starting square coordinates:</h3>
+    X: <input id="x" name="x" type="number" min="0" max="7" value="0" style="width:100px">
+    <br><br>
+    Y: <input id="y" name="y" type="number" min="0" max="7" value="0" style="width:100px">
+    <br><br>
+    <button class="button myBtn" onclick="start()">Start</button>
+    <br><br>
+    <div id="mainContainer">
+        <div id="tableContainer"></div>
+        <br><br>
+        <div id="movesContainer"></div>
+    </div>
+
+    <script>
+        buildChessboard(false);
+    </script>
+
+</body>
+</html>

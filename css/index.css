@@ -1,0 +1,81 @@
+﻿
+#knightDv {
+    position: relative;
+}
+
+.knightImg {
+    position: absolute;
+    right: 0;
+    width: 45px;
+    height: 45px;
+}
+
+/*.visitedImg {
+    width: 25px;
+    height: 25px;
+}*/
+#visitedDv {
+    position: relative;
+}
+.visitedImg {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 25px;
+    height: 25px;
+}
+
+table {
+    width: 640px;
+    height: 640px;
+}
+
+table.chessboard {
+    /*margin: 80px auto;*/
+    background-color: brown;
+    border-collapse: collapse;
+}
+
+td.chessboard {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #333;
+}
+
+tr.chessboard:nth-child(odd) td.chessboard:nth-child(even),
+tr.chessboard:nth-child(even) td.chessboard:nth-child(odd) {
+    background: white;
+}
+
+svg {
+    width: 640px;
+    height: 675px;
+}
+
+#foreignObject {
+    width: 640px;
+    height: 675px;
+}
+
+#foreignObjectBody {
+    width: 640px;
+    height: 675px;
+}
+
+.button {
+    background-color: #555555;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+.myBtn:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}

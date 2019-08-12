@@ -1,0 +1,293 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/knightTour.css">
+    <script src="js/tour.js"></script>
+    <script src="js/helper.js"></script>
+    <link rel="icon"
+          type="image/png"
+          href="favicon.ico">
+</head>
+<body>
+    <h1>Knights Tour</h1>
+    <hr />
+    <h3>Please choose starting square coordinates:</h3>
+
+    X: <input id="x" name="x" type="number" min="0" max="7" value="2" style="width:100px">
+    <br><br>
+    Y: <input id="y" name="y" type="number" min="0" max="7" value="2" style="width:100px">
+    <br><br>
+    <button onclick="run()">Run</button>
+    <!--<div id="#moves"></div>-->
+    <br /><br />
+
+    <svg id="mySvg" xmlns="http://www.w3.org/2000/svg">
+        <foreignObject id="foreignObject" x="0" y="0" width="640" height="675">
+            <body xmlns="http://www.w3.org/1999/xhtml">
+                <div id="foreignObjectBody" style="width:640px; height:675px">
+
+                </div>
+            </body>
+        </foreignObject>
+    </svg>
+
+    <script>
+
+        var chessboardSize = 8;
+        var currentInterval = null;
+        buildChessboard(false);
+
+        
+        function run() {
+
+            buildChessboard(true);
+
+            var x = parseInt(document.getElementById("x").value);
+            var y = parseInt(document.getElementById("y").value);
+
+            if (validateInput(x, y)) {
+
+                var knightImg = createKnightImg();
+                let formatedPathArr = getKnightTourMovesSequence(x, y, chessboardSize);
+                let delay = 800;
+
+                //console.log(formatedPathArr);
+
+                drawKnightsTour(0, formatedPathArr, knightImg, undefined, delay);
+            }
+        }
+
+        function buildChessboard(isInit) {
+
+            var foreignObjectBody = document.getElementById('foreignObjectBody');
+
+            var table = null;
+            if (isInit) {
+                document.getElementById('chessboardTbl').remove();
+                if (currentInterval !== null) {
+                    clearTimeout(currentInterval);
+                }
+            }
+
+            var table = document.createElement('table');
+            table.id = "chessboardTbl";
+            table.classList.add("chessboard");
+
+            var td = null;
+            var tr = null;
+            for (let y = 0; y < chessboardSize; y++) {
+
+                tr = document.createElement('tr');
+                tr.classList.add("chessboard");
+
+                for (let x = 0; x < chessboardSize; x++) {
+
+                    td = document.createElement('td');
+                    //Each created td is set with x & y coordinates
+                    td.id = x + ":" + y;
+                    td.classList.add("chessboard");
+
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+
+            foreignObjectBody.appendChild(table);
+        }
+
+        function validateInput(x, y) {
+            if (isNaN(x) || isNaN(y)) {
+                alert("Invalid input params...");
+                return false;
+            }
+            else if (x < 0 || x > chessboardSize - 1) {
+                alert("'X' value must be between zero and " + chessboardSize - 1);
+                return false;
+            }
+            else if (y < 0 || y > chessboardSize - 1) {
+                alert("'Y' value must be between zero and " + chessboardSize - 1);
+                return false;
+            }
+            return true;
+        }
+        function getKnightTourMovesSequence(x, y, chessboardSize) {
+            const moves = tour(x, y, chessboardSize);
+            //document.getElementById("#moves").innerHTML = moves;
+
+            //console.log(moves);
+            const formatedPathArr = [];
+            let formattedItem = {};
+            for (let i = 0; i < moves.length; i++) {
+
+                let currMove = moves[i];
+                if (currMove.Path.length === 0) {
+                    //FirstMove
+                    formattedItem = {
+                        X: currMove.NextMove[0],
+                        Y: currMove.NextMove[1],
+                        IsNextMove: true
+                    };
+                    formatedPathArr.push(formattedItem);
+                }
+                else {
+
+                    for (let i = 0; i < currMove.Path.length; i++) {
+                        formattedItem = {
+                            X: currMove.Path[i][0],
+                            Y: currMove.Path[i][1],
+                            IsNextMove: currMove.Path[i][0] === currMove.NextMove[0] &&
+                                currMove.Path[i][1] === currMove.NextMove[1]
+                        };
+                        formatedPathArr.push(formattedItem);
+                    }
+                }
+            }
+            return formatedPathArr;
+        }
+        
+        function appendKnightImgToSquare(square, knightImg) {
+            square.appendChild(knightImg);
+        }
+        function appendVisitedImgToSquare(prevSquare) {
+            if (prevSquare !== undefined && prevSquare !== null) {
+                var hasChildNodes = prevSquare.hasChildNodes();
+                if (!hasChildNodes) {
+                    var visitedImg = createVisitedImg();
+                    prevSquare.appendChild(visitedImg);
+                }
+            }
+        }
+        function getPositionXY(element) {
+            var table = document.getElementById('chessboardTbl');
+
+            var parentPos = table.getBoundingClientRect(),
+                childPos = element.getBoundingClientRect(),
+                relativePos = {};
+
+            relativePos.top = childPos.top - parentPos.top,
+                relativePos.right = childPos.right - parentPos.right,
+                relativePos.bottom = childPos.bottom - parentPos.bottom,
+                relativePos.left = childPos.left - parentPos.left;
+
+            console.log(relativePos);
+            // something like: {top: 50, right: -100, bottom: -50, left: 100}
+
+            var posXY = {
+                x: relativePos.left + 20,
+                y: relativePos.top - 20
+            };
+            return posXY;
+
+            //var rect = element.getBoundingClientRect();
+            //return rect;
+        }
+        function createKnightImg() {
+
+            var dv = document.createElement('div');
+            dv.id = "knightDv";
+            var knightImg = document.createElement('img');
+            knightImg.id = "knightImg"
+            knightImg.src = "image/knight.png";
+            knightImg.classList.add("knightImg");
+            dv.appendChild(knightImg);
+            return dv;
+        }
+        function createVisitedImg() {
+
+            var dv = document.createElement('div');
+            dv.id = "visitedDv";
+            var visitedImg = document.createElement('img');
+            visitedImg.id = "visitedImg"
+            visitedImg.src = "image/visited.jpg";
+            visitedImg.classList.add("visitedImg");
+            dv.appendChild(visitedImg);
+            return dv;
+        }
+
+        function drawKnightsTour(counter, formatedPathArr, knightImg, previousSquareTD, delay) {
+
+            //console.log(formatedPathArr);
+
+            //if (counter < formatedPathArr.length) {
+            if (counter < 10) {
+
+                console.log(formatedPathArr[counter]);
+
+                currentInterval = setTimeout(function () {
+
+                    let currItem = formatedPathArr[counter];
+                    let squareElemId = currItem.X + ":" + currItem.Y;//Fox ex: 2:2
+                    let squareToVisitTD = document.getElementById(squareElemId);
+
+                    if (counter === 0) {
+
+                        //FirstMove
+                        var firstMoveElemId = currItem.X + ":" + currItem.Y;//Fox ex: 2:2
+                        var firstMoveSquareTD = document.getElementById(firstMoveElemId);
+
+                        //Red Track
+                        //appendVisitedImgToSquare(firstMoveSquareTD);
+
+                        //First move
+                        appendKnightImgToSquare(firstMoveSquareTD, knightImg);
+                    }
+                    else {
+                        if (currItem.IsNextMove) {
+
+                            console.log("currItem.IsNextMove? " + currItem.IsNextMove);
+
+                            //Red Track
+                            //appendVisitedImgToSquare(squareToVisitTD);
+
+                            //KnightImg
+                            appendKnightImgToSquare(squareToVisitTD, knightImg);
+                        }
+                        else {
+
+                           
+
+                            //Red Track
+                            //appendVisitedImgToSquare(squareToVisitTD);
+
+                            console.log("Prev");
+                            var prevSquarePosRect = getPositionXY(previousSquareTD);
+
+                            console.log("Current");
+                            var currSquarePosRect = getPositionXY(squareToVisitTD);
+
+                            console.log("prevSquarePosRect.x = " + prevSquarePosRect.x);
+                            console.log("prevSquarePosRect.y = " + prevSquarePosRect.y);
+
+                            console.log("currSquarePosRect.x = " + currSquarePosRect.x);
+                            console.log("currSquarePosRect.y = " + currSquarePosRect.y);
+
+
+                            createSvgLine(prevSquarePosRect.x,
+                                prevSquarePosRect.y,
+                                currSquarePosRect.x,
+                                currSquarePosRect.y);
+                        }
+                    }
+
+                    //appendVisitedImgToSquare(previousSquareTD);
+
+                    counter++;
+                    drawKnightsTour(counter, formatedPathArr, knightImg, squareToVisitTD, delay);
+                }, delay);
+            }
+        }
+        function createSvgLine(x1, y1, x2, y2) {
+            var svg = document.getElementById('mySvg');
+            var newLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            newLine.setAttribute('x1', x1);
+            newLine.setAttribute('y1', y1);
+            newLine.setAttribute('x2', x2);
+            newLine.setAttribute('y2', y2);
+            newLine.setAttribute("stroke", "red");
+            svg.appendChild(newLine);
+        }
+
+    </script>
+
+</body>
+</html>
